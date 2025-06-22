@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Tasks</h2>
+
+<a href="{% url 'task-create' %}" class="btn btn-primary mb-3">Add New Task</a>
+
+{% if object_list %}
+  <div class="table-responsive">
+    <table class="table table-striped table-hover align-middle shadow-sm">
+      <thead class="table-dark">
+        <tr>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Assigned To</th>
+          <th>Project</th>
+          <th>Due Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in object_list %}
+          <tr>
+            <td>{{ task.name }}</td>
+            <td>
+              <span class="badge 
+                {% if task.status == 'Pending' %}bg-warning text-dark
+                {% elif task.status == 'In Progress' %}bg-info text-white
+                {% elif task.status == 'Completed' %}bg-success
+                {% else %}bg-secondary
+                {% endif %}">
+                {{ task.status }}
+              </span>
+            </td>
+            <td>{{ task.assigned_to.name|default:"Unassigned" }}</td>
+            <td>{{ task.project.name|default:"N/A" }}</td>
+            <td>{{ task.due_date|date:"M d, Y" }}</td>
+            <td>
+              <a href="{% url 'task-update' task.pk %}" class="btn btn-outline-primary btn-sm me-2">Edit</a>
+              <a href="{% url 'task-delete' task.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <p class="text-muted fst-italic">No tasks found.</p>
+{% endif %}
+
+{% endblock %}
